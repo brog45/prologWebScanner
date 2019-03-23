@@ -6,9 +6,9 @@
 %   Tests Url for vulnerable parameters and succeeds when parameter named Name 
 %   is found to be vulnerable to Vulnerability.
 url_parameter_vulnerable(Url, Name, Vulnerability) :-
+    proxy(Options),
     vulnerability_spike(Vulnerability, Spike),
     spike_url(Url, Spike, Name, SpikedUrl),
-    proxy(Options),
     http_get(SpikedUrl, ResponseBody, Options),
     vulnerability_tell(Vulnerability, Tell),
     sub_atom(ResponseBody, _, _, _, Tell).
