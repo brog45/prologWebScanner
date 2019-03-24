@@ -35,11 +35,9 @@ request_to_url(Request, Protocol, Url) :-
 
 url_form_parameter_vulnerable(Url, FormPairs, ParameterName, Vulnerability) :-
     proxy(Options), 
-    parse_url(Url, UrlAttributes),
     vulnerability_spike(Vulnerability, Spike),
     select(ParameterName=_, FormPairs, ParameterName=Spike, SpikedFormPairs),
-    append(UrlAttributes, [form(SpikedFormPairs)], NewRequest),
-    http_post(NewRequest, form(SpikedFormPairs), Reply, Options),
+    http_post(Url, form(SpikedFormPairs), Reply, Options),
     vulnerability_tell(Vulnerability, Tell),
     sub_atom(Reply, _, _, _, Tell).
 
