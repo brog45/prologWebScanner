@@ -25,8 +25,13 @@ stream_request_form(Stream, Request, FormPairs) :-
     http_read_data(Request, FormPairs, []).
 
 request_to_url(Request, Protocol, Url) :-
+    % with query parameters in the URL
     subset([host(Host), path(Path), search(Search)], Request), 
-    parse_url(Url, [protocol(Protocol), host(Host), path(Path), search(Search)]).
+    !, parse_url(Url, [protocol(Protocol), host(Host), path(Path), search(Search)]).
+request_to_url(Request, Protocol, Url) :-
+    % without query parameters
+    subset([host(Host), path(Path)], Request), 
+    !, parse_url(Url, [protocol(Protocol), host(Host), path(Path)]).
 
 url_form_parameter_vulnerable(Url, FormPairs, ParameterName, Vulnerability) :-
     proxy(Options), 
