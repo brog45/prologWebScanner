@@ -1,15 +1,15 @@
-:- module(urlfuzz,[url_parameter_vulnerable/3]).
+:- module(urlfuzz,[url_parameter_vulnerable/5]).
 
 :- use_module(library(http/http_client)).
 
-%!	url_parameter_vulnerable(+Url, -Name, -Vulnerability) is nondet
+%!	url_parameter_vulnerable(+Method, +Url, +FormPairs, -Name, -Vulnerability) is nondet
 %   Tests Url for vulnerable parameters and succeeds when parameter named Name 
 %   is found to be vulnerable to Vulnerability.
-url_parameter_vulnerable(Url, Name, Vulnerability) :-
+url_parameter_vulnerable(Method, Url, FormPairs, Name, Vulnerability) :-
     proxy(Options),
     vulnerability_spike(Vulnerability, Spike),
     spike_url(Url, Spike, Name, SpikedUrl),
-    http_get(SpikedUrl, ResponseBody, Options),
+    http_do(Method, SpikedUrl, FormPairs, ResponseBody, Options),
     vulnerability_tell(Vulnerability, Tell),
     sub_atom(ResponseBody, _, _, _, Tell).
 
@@ -19,6 +19,11 @@ spike_url(Url, Spike, Name, SpikedUrl) :-
     select(Name=_, Pairs, Name=Spike, SpikedPairs),
     select(search(Pairs), Attributes, search(SpikedPairs), SpikedAttributes),
     parse_url(SpikedUrl, SpikedAttributes).
+
+http_do(get, SpikedUrl, _, ResponseBody, Options) :-
+    http_get(SpikedUrl, ResponseBody, Options).
+http_do(post, SpikedUrl, FormPairs, ResponseBody, Options) :-
+    http_post(SpikedUrl, form(FormPairs), ResponseBody, Options).
 
 vulnerability_spike(xss, 'fd<xss>sa').
 vulnerability_spike(sqli, 'fd\'sa').
