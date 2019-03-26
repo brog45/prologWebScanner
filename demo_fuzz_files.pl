@@ -1,5 +1,11 @@
 % demo_fuzz_files.pl: demonstrate of fuzzing GET and POST requests saved to text files
 %
+% The text files get.txt and post.txt contain samples of requests to the badstore website 
+% at address 192.168.56.101. The badstore VM is available for download from vulnhub.com. 
+% If you wish to run this script with those samples, you will need to download badstore 
+% and configure it to run at that address. I followed the setup instructions in Chapter 2 
+% of "Gray Hat C#" by Brandon Perry.
+%
 % To run this script use this command at the shell prompt: 
 %   $ swipl -s fuzz_file.pl
 %
