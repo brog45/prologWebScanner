@@ -1,4 +1,4 @@
-% demo_fuzz_files.pl: demonstrate of fuzzing GET and POST requests saved to text files
+% demo_fuzz_files.pl: demonstrate fuzzing GET and POST requests saved to text files
 %
 % The text files get.txt and post.txt contain samples of requests to the badstore website 
 % at address 192.168.56.101. The badstore VM is available for download from vulnhub.com. 
