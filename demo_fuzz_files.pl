@@ -21,7 +21,7 @@
 :- use_module(library(url), [parse_url/2]).
 
 % modules
-:- use_module([urlfuzz, postfuzz]).
+:- use_module(webfuzz).
 
 main :-
     fuzz_from_file('get.txt'),
