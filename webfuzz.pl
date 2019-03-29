@@ -3,7 +3,7 @@
 :- use_module(library(http/http_client)).
 
 %!  url_form_parameter_vulnerable(+Url, +FormPairs, -ParameterName, -Vulnerability)
-%   Posts mutated versions of FormPairs to Url and succeds when parameter named
+%   Posts mutated versions of FormPairs to Url and succeeds when parameter named
 %   ParameterName is found to be vulnerable to Vulnerability.
 url_form_parameter_vulnerable(Url, FormPairs, ParameterName, Vulnerability) :-
     proxy(Options), 
