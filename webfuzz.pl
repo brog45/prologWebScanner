@@ -2,7 +2,7 @@
 
 :- use_module(library(http/http_client)).
 
-%!  url_form_parameter_vulnerable(+Url, +FormPairs, -ParameterName, -Vulnerability)
+%!  url_form_parameter_vulnerable(+Url, +FormPairs, -ParameterName, -Vulnerability) is nondet
 %   Posts mutated versions of FormPairs to Url and succeeds when parameter named
 %   ParameterName is found to be vulnerable to Vulnerability.
 url_form_parameter_vulnerable(Url, FormPairs, ParameterName, Vulnerability) :-
@@ -13,13 +13,13 @@ url_form_parameter_vulnerable(Url, FormPairs, ParameterName, Vulnerability) :-
     vulnerability_tell(Vulnerability, Tell),
     sub_atom(Reply, _, _, _, Tell).
 
-%!  url_parameter_vulnerable(+Method, +Url, +FormPairs, -Name, -Vulnerability) is nondet
-%   Tests Url for vulnerable parameters and succeeds when parameter named Name 
+%!  url_parameter_vulnerable(+Method, +Url, +FormPairs, -ParameterName, -Vulnerability) is nondet
+%   Tests Url for vulnerable parameters and succeeds when parameter named ParameterName 
 %   is found to be vulnerable to Vulnerability.
-url_parameter_vulnerable(Method, Url, FormPairs, Name, Vulnerability) :-
+url_parameter_vulnerable(Method, Url, FormPairs, ParameterName, Vulnerability) :-
     proxy(Options),
     vulnerability_spike(Vulnerability, Spike),
-    spike_url(Url, Spike, Name, SpikedUrl),
+    spike_url(Url, Spike, ParameterName, SpikedUrl),
     http_do(Method, SpikedUrl, FormPairs, ResponseBody, Options),
     vulnerability_tell(Vulnerability, Tell),
     sub_atom(ResponseBody, _, _, _, Tell).
