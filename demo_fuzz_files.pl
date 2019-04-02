@@ -7,10 +7,10 @@
 % of "Gray Hat C#" by Brandon Perry.
 %
 % To run this script use this command at the shell prompt: 
-%   $ swipl -s fuzz_file.pl
+%   $ swipl -s demo_fuzz_files.pl
 %
 % To use an HTTP proxy like BurpSuite or Fiddler, set the environment variable http_proxy: 
-%   $ env http_proxy=http://localhost:8080 swipl -s fuzz_file.pl
+%   $ env http_proxy=http://localhost:8080 swipl -s demo_fuzz_files.pl
 
 :- initialization(main).
 :- initialization(halt).
