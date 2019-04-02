@@ -24,6 +24,7 @@
 main :-
     fuzz_from_har('firefox.har').
 
+% only fuzz GETs with query parameters and POSTs
 in_scope(get, Url) :-
     parse_url(Url, Attributes),
     memberchk(search([_|_]), Attributes).
