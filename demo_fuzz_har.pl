@@ -37,6 +37,8 @@ fuzz_from_har(File) :-
     in_scope(Method, Url),
     format('URL: ~w~nMETHOD: ~w~nFORM: ~q~n', [Url, Method, FormPairs]),
     fuzz_loop(Method, Url, FormPairs), 
+    check_csrf(Request, Method, FormPairs),
+    nl,
     fail.
 fuzz_from_har(_).
     
@@ -72,10 +74,32 @@ param_dict_to_pair(Dict, Name=Value) :-
 
 fuzz_loop(Method, Url, FormPairs) :- 
     url_parameter_vulnerable(Method, Url, FormPairs, ParameterName, Vulnerability), 
-    format('Possible ~w vulnerability in query parameter ~q~n', [Vulnerability, ParameterName]),
+    format('* Possible ~w vulnerability in query parameter ~q~n', [Vulnerability, ParameterName]),
     fail.
 fuzz_loop(post, Url, FormPairs) :- 
     url_form_parameter_vulnerable(Url, FormPairs, ParameterName, Vulnerability), 
-    format('Possible ~w vulnerability in form parameter ~q~n', [Vulnerability, ParameterName]),
+    format('* Possible ~w vulnerability in form parameter ~q~n', [Vulnerability, ParameterName]),
     fail.
-fuzz_loop(_,_,_) :- nl.
+fuzz_loop(_,_,_).
+
+% If a GET request takes action, it can be vulnerable to CSRF, but I don't know how to detect that.
+check_csrf(_, get, _).
+check_csrf(Request, post, FormPairs) :-
+    \+ csrf_protected(Request, post, FormPairs),
+    format('* Possible csrf vulnerability~n').
+
+csrf_protected(Request, post, FormPairs) :-
+    % very early ASP.NET MVC, circa 2008
+    request_cookies(Request, CookiePairs),
+    memberchk('__RequestVerificationToken'=Value, FormPairs),
+    memberchk('__RequestVerificationToken'=Value, CookiePairs).
+% csrf_protected(Request, post, FormPairs) :-
+%     % later ASP.NET MVC
+%     request_cookies(Request, CookiePairs),
+%     memberchk('__RequestVerificationToken'=_, FormPairs),
+%     % TODO: cookie name starts with '__RequestVerificationToken_'
+%     memberchk('__RequestVerificationToken_'=_, CookiePairs).
+
+request_cookies(Request, CookiePairs) :-
+    _{cookies:CookieDictList} :< Request,
+    maplist(param_dict_to_pair, CookieDictList, CookiePairs).
