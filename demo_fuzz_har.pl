@@ -49,8 +49,8 @@ har_request(File, Request) :-
 
 har_json(File, JsonDict) :-
     setup_call_cleanup(open(File, read, Fd, []),
-    json_read_dict(Fd, JsonDict), 
-    close(Fd)).
+        json_read_dict(Fd, JsonDict), 
+        close(Fd)).
 
 request_url_method_form(Request, Url, Method, Form) :-
     _{url:Url, method:MethodString} :< Request,
