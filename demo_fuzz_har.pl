@@ -91,14 +91,15 @@ check_csrf(Request, post, FormPairs) :-
 csrf_protected(Request, post, FormPairs) :-
     % very early ASP.NET MVC, circa 2008
     request_cookies(Request, CookiePairs),
-    memberchk('__RequestVerificationToken'=Value, FormPairs),
-    memberchk('__RequestVerificationToken'=Value, CookiePairs).
-% csrf_protected(Request, post, FormPairs) :-
-%     % later ASP.NET MVC
-%     request_cookies(Request, CookiePairs),
-%     memberchk('__RequestVerificationToken'=_, FormPairs),
-%     % TODO: cookie name starts with '__RequestVerificationToken_'
-%     memberchk('__RequestVerificationToken_'=_, CookiePairs).
+    memberchk("__RequestVerificationToken"=Value, FormPairs),
+    memberchk("__RequestVerificationToken"=Value, CookiePairs).
+csrf_protected(Request, post, FormPairs) :-
+    % later ASP.NET MVC
+    request_cookies(Request, CookiePairs),
+    memberchk("__RequestVerificationToken"=_, FormPairs),
+    % there is a cookie with a name that starts with '__RequestVerificationToken_'
+    member(Name=_, CookiePairs),
+    sub_string(Name, 0, _, _, '__RequestVerificationToken_').
 
 request_cookies(Request, CookiePairs) :-
     _{cookies:CookieDictList} :< Request,
