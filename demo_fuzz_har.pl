@@ -32,22 +32,23 @@ in_scope(post, _).
 
 fuzz_from_har(File) :-
     format('--- Fuzzing from HAR File: ~w ---~n', [File]),
-    har_request(File, Request), 
+    har_request_response(File, Request, Response), 
     request_url_method_form(Request, Url, Method, FormPairs),
     in_scope(Method, Url),
-    format('URL: ~w~nMETHOD: ~w~nFORM: ~q~n', [Url, Method, FormPairs]),
+    format('URL: ~w~nMETHOD: ~w~n', [Url, Method]),
     fuzz_loop(Method, Url, FormPairs), 
     check_csrf(Request, Method, FormPairs),
+    check_session_cookie(Response),
     nl,
     fail.
 fuzz_from_har(_).
     
-har_request(File, Request) :-
+har_request_response(File, Request, Response) :-
     har_json(File, JsonDict),
     JsonDict :< _{log: Log},
     _{entries:Entries} :< Log,
     member(Entry, Entries),
-    _{request:Request} :< Entry.
+    _{request:Request, response:Response} :< Entry.
 
 har_json(File, JsonDict) :-
     setup_call_cleanup(open(File, read, Fd, []),
@@ -104,3 +105,43 @@ csrf_protected(Request, post, FormPairs) :-
 request_cookies(Request, CookiePairs) :-
     _{cookies:CookieDictList} :< Request,
     maplist(param_dict_to_pair, CookieDictList, CookiePairs).
+
+check_session_cookie(Response) :-
+    _{headers:Headers} :< Response,
+    (   member(_{name:"set-cookie", value:String}, Headers)
+    ;   member(_{name:"Set-Cookie", value:String}, Headers)
+    ),
+    atom_string(Cookie, String),
+    % cookie_is_session_id(Cookie),
+    string_lower(String, LowerString),
+    atom_string(Lower, LowerString),
+    cookie_split(Lower, List),
+    (   memberchk(secure, List)
+    ->  true
+    ;   format('* Session ID cookie does not use Secure: ~q~n', [Cookie])
+    ),
+    (   memberchk(httponly, List)
+    ->  true
+    ;   format('* Session ID cookie does not use HttpOnly: ~q~n', [Cookie])
+    ),
+    (   memberchk('samesite=strict', List) ; memberchk('samesite=lax', List)
+    ->  true
+    ;   format('* Session ID cookie does not use SameSite: ~q~n', [Cookie])
+    ),
+    fail.
+check_session_cookie(_).
+
+cookie_is_session_id(Cookie) :- 
+    sub_atom(Cookie, Start, 1, _, =),
+    !, session_id_name(CookieName),
+    sub_atom(Cookie, 0, Start, _, CookieName).
+
+session_id_name('ASP.NET_SessionId').
+
+cookie_split(Cookie, [Head|Tail]) :-
+    sub_atom(Cookie, Start, 2, _, '; '),
+    sub_atom(Cookie, 0, Start, _, Head),
+    Continue is Start + 2,
+    sub_atom(Cookie, Continue, _, 0, Remainder),
+    !, cookie_split(Remainder, Tail).
+cookie_split(Cookie, [Cookie]).
