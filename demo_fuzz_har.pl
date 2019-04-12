@@ -138,6 +138,9 @@ cookie_is_session_id(Cookie) :-
 
 session_id_name('ASP.NET_SessionId').
 
+authentication_cookie_name('.AspNetCore.Cookies').
+authentication_cookie_name('.ASPXFORMSAUTH').
+
 cookie_split(Cookie, [Head|Tail]) :-
     sub_atom(Cookie, Start, 2, _, '; '),
     sub_atom(Cookie, 0, Start, _, Head),
