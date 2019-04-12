@@ -112,7 +112,7 @@ check_session_cookie(Response) :-
     ;   member(_{name:"Set-Cookie", value:String}, Headers)
     ),
     atom_string(Cookie, String),
-    % cookie_is_session_id(Cookie),
+    % cookie_is_sensitive(Cookie),
     string_lower(String, LowerString),
     atom_string(Lower, LowerString),
     cookie_split(Lower, List),
@@ -131,15 +131,26 @@ check_session_cookie(Response) :-
     fail.
 check_session_cookie(_).
 
-cookie_is_session_id(Cookie) :- 
+%! cookie_is_sensitive(+Cookie) is semidet.
+cookie_is_sensitive(Cookie) :- 
+    cookie_name(Cookie, CookieName),
+    cookie_purpose(CookieName, Purpose),
+    purpose_is_sensitive(Purpose),
+    !.
+
+%! cookie_name(+Cookie, -CookieName) is semidet.
+cookie_name(Cookie, CookieName) :-
     sub_atom(Cookie, Start, 1, _, =),
-    !, session_id_name(CookieName),
-    sub_atom(Cookie, 0, Start, _, CookieName).
+    sub_atom(Cookie, 0, Start, _, CookieName),
+    !.
 
-session_id_name('ASP.NET_SessionId').
+%! purpose_is_sensitive(?CookieName) is nondet.
+purpose_is_sensitive(session_id).
+purpose_is_sensitive(authentication_ticket).
 
-authentication_cookie_name('.AspNetCore.Cookies').
-authentication_cookie_name('.ASPXFORMSAUTH').
+cookie_purpose('ASP.NET_SessionId', session_id).
+cookie_purpose('.AspNetCore.Cookies', authentication_ticket).
+cookie_purpose('.ASPXFORMSAUTH', authentication_ticket).
 
 cookie_split(Cookie, [Head|Tail]) :-
     sub_atom(Cookie, Start, 2, _, '; '),
