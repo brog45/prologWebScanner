@@ -89,4 +89,4 @@ PRs accepted.
 
 ## License
 
-MIT © 2019 [Brian Rogers](https://github.com/brog45)
+[MIT](LICENSE) © 2019 [Brian Rogers](https://github.com/brog45)
