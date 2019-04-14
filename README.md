@@ -13,7 +13,6 @@ PrologWebScanner is a set of tools for using SWI-Prolog to find security issues 
 - [Install](#install)
 - [Usage](#usage)
 - [API](#api)
-- [Maintainers](#maintainers)
 - [Contributing](#contributing)
 - [License](#license)
 
