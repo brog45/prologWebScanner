@@ -1,6 +1,6 @@
 # prologWebScanner
 
-> a web application scanner for use with SWI-Prolog
+> SWI-Prolog code to scan a web application for vulnerable code
 
 PrologWebScanner is a set of tools for using SWI-Prolog to find security issues in web applications. It includes passive auditing techniques and active "fuzzing" techniques. It was created for my own entertainment and education, but I hope to develop it into a reusable pack. 
 
