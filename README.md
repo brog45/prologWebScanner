@@ -1,8 +1,8 @@
 # prologWebScanner
 
-> SWI-Prolog code to scan a web application for vulnerable code
+> SWI-Prolog code to test the security of your web application
 
-PrologWebScanner is a set of tools for using SWI-Prolog to find security issues in web applications. It includes passive auditing techniques and active "fuzzing" techniques. It was created for my own entertainment and education, but I hope to develop it into a reusable pack. 
+PrologWebScanner is a set of tools for using SWI-Prolog to find security issues in web applications. It includes passive inspection and active "fuzzing" of HTTP traffic. It was created for my own entertainment and education, but I hope to develop it into a reusable pack. 
 
 **WARNING:** Never scan a target you don't own without permission. You could get in trouble using this code against a target someone else owns. People don't like being targetted for scans and might call the police on you. Fuzzing generates a lot of traffic. It may generate errors in the targeted web application. It may leave persistent data in the target's database that could continue to cause errors after the scan. 
 
@@ -63,7 +63,7 @@ This approach requires using a web proxy tool like BurpSuire or Fiddler to colle
 
 ### demo_fuzz_har.pl
 
-`demo_fuzz_har.pl` demonstrates parsing and auditing GET and POST requests saved to the HAR (HTTP archive) file `firefox.har` to both passively audit the session and actively fuzz.
+`demo_fuzz_har.pl` demonstrates parsing and inspecting GET and POST requests saved to the HAR (HTTP archive) file `firefox.har` to both passively inspect the session and actively fuzz.
 
 To run this script use this command at the shell prompt: 
 
