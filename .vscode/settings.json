@@ -1,0 +1,7 @@
+{
+    "prolog.executablePath": "/usr/bin/swipl",
+    "files.associations": {
+        "*.pl": "prolog",
+        "*.har": "json"
+    },
+}
