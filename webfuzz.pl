@@ -1,4 +1,4 @@
-:- module(urlfuzz,[url_parameter_vulnerable/5, url_form_parameter_vulnerable/4]).
+:- module(webfuzz,[url_parameter_vulnerable/5, url_form_parameter_vulnerable/4]).
 
 :- use_module(library(http/http_client)).
 
