@@ -124,7 +124,7 @@ check_session_cookie(Response) :-
     ->  true
     ;   format('* Session ID cookie does not use HttpOnly: ~q~n', [Cookie])
     ),
-    (   memberchk('samesite=strict', List) ; memberchk('samesite=lax', List)
+    (   (memberchk('samesite=strict', List) ; memberchk('samesite=lax', List))
     ->  true
     ;   format('* Session ID cookie does not use SameSite: ~q~n', [Cookie])
     ),
