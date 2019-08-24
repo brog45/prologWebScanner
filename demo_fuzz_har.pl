@@ -37,7 +37,7 @@ fuzz_from_har(File) :-
     in_scope(Method, Url),
     format('URL: ~w~nMETHOD: ~w~n', [Url, Method]),
     fuzz_loop(Method, Url, FormPairs), 
-    check_csrf(Request, Method, FormPairs),
+    check_csrf(Method, Request, FormPairs),
     check_session_cookie(Response),
     nl,
     fail.
@@ -84,18 +84,20 @@ fuzz_loop(post, Url, FormPairs) :-
     fail.
 fuzz_loop(_,_,_).
 
+%! check_csrf(+Method, +Request, +FormPairs) is semidet.
 % If a GET request takes action, it can be vulnerable to CSRF, but I don't know how to detect that.
-check_csrf(_, get, _).
-check_csrf(Request, post, FormPairs) :-
-    \+ csrf_protected(Request, post, FormPairs),
+check_csrf(get, _, _).
+check_csrf(post, Request, FormPairs) :-
+    \+ csrf_protected(post, Request, FormPairs),
     format('* Possible csrf vulnerability~n').
 
-csrf_protected(Request, post, FormPairs) :-
+%! csrf_protected(+Method, +Request, +FormPairs) is nondet.
+csrf_protected(post, Request, FormPairs) :-
     % very early ASP.NET MVC, circa 2008
     request_cookies(Request, CookiePairs),
     memberchk("__RequestVerificationToken"=Value, FormPairs),
     memberchk("__RequestVerificationToken"=Value, CookiePairs).
-csrf_protected(Request, post, FormPairs) :-
+csrf_protected(post, Request, FormPairs) :-
     % later ASP.NET MVC
     request_cookies(Request, CookiePairs),
     memberchk("__RequestVerificationToken"=_, FormPairs),
