@@ -58,13 +58,14 @@ har_json(File, JsonDict) :-
 request_url_method_form(Request, Url, Method, Form) :-
     _{url:Url, method:MethodString} :< Request,
     method_atom(MethodString, Method),
-    request_method_form(Request, Method, Form).
+    method_request_form(Method, Request, Form).
 
 method_atom("GET", get).
 method_atom("POST", post).
 
-request_method_form(_, get, []).
-request_method_form(Request, post, FormPairs) :-
+%! method_request_form(+Method, +Request, -FormPairs) is semidet.
+method_request_form(get, _, []).
+method_request_form(post, Request, FormPairs) :-
     _{postData:PostData} :< Request,
     _{mimeType:MimeType, params:ParamList} :< PostData,
     MimeType = "application/x-www-form-urlencoded",
