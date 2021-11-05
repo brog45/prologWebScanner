@@ -59,7 +59,7 @@ To run this script use this command at the shell prompt:
 swipl -s demo_fuzz_files.pl
 ```
 
-This approach requires using a web proxy tool like BurpSuire or Fiddler to collect HTTP requests then manually copy and paste interesting requests to text files. I find this process tedious and it loses a lot of context in the process.
+This approach requires using a web proxy tool like Burp Suite or Fiddler to collect HTTP requests then manually copy and paste interesting requests to text files. I find this process tedious and it loses a lot of context in the process.
 
 ### demo_fuzz_har.pl
 
